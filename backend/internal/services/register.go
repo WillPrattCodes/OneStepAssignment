@@ -1,9 +1,9 @@
 package services
 
 import (
-	"backend/internal/database"
 	"backend/internal/models"
 	"backend/internal/utils"
+	"database/sql"
 	"fmt"
 	"regexp"
 	"strings"
@@ -11,9 +11,9 @@ import (
 
 //custom err types
 var (
-	ErrInvalidEmail = fmt.Errorf("invalid email format")
+	ErrInvalidEmail      = fmt.Errorf("invalid email format")
 	ErrEmailAlreadyExists = fmt.Errorf("email already exists")
-	ErrHashingPassword = fmt.Errorf("failed to hash password")
+	ErrHashingPassword   = fmt.Errorf("failed to hash password")
 )
 
 //make sure email is in correct format
@@ -23,31 +23,31 @@ func isValidEmail(email string) bool {
 }
 
 //register user in db
-func RegisterUser(user models.User) error {
+func RegisterUser(db *sql.DB, user models.User) error {
 	fmt.Println("In RegisterUser")
 
 	//validate email value
 	if !isValidEmail(user.Email) {
 		return ErrInvalidEmail
-	};
+	}
 
 	//hash pass
 	hashedPassword, err := utils.HashPassword(user.Password)
 	fmt.Println("hashedPassword: ", hashedPassword)
 	if err != nil {
 		return ErrHashingPassword
-	};
+	}
 
 	//insert user into db
 	insertQuery := `INSERT INTO users (username, password, email) VALUES (?, ?, ?)`
-	_, err = database.DB.Exec(insertQuery, user.Username, hashedPassword, user.Email)
+	_, err = db.Exec(insertQuery, user.Username, hashedPassword, user.Email)
 	if err != nil {
 		//handle email existing error
 		if strings.Contains(err.Error(), "UNIQUE constraint failed") {
 			return ErrEmailAlreadyExists
 		}
 		return fmt.Errorf("failed to register user: %v", err)
-	};
+	}
 
 	return nil
 }

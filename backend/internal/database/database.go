@@ -9,14 +9,9 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-var DB *sql.DB
-
 //init db connection
-func InitDB() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+func InitDB() (*sql.DB, error) {
+	godotenv.Load()
 
 	//define db path from env variable
 	dbPath := os.Getenv("DB_PATH")
@@ -25,9 +20,9 @@ func InitDB() {
 	}
 
 	//connect to sqlite db or create
-	DB, err = sql.Open("sqlite3", dbPath)
+	db, err := sql.Open("sqlite3", dbPath)
 	if err != nil {
-		log.Fatalf("Failed to connect to the database: %v", err)
+		return nil, err
 	}
 
 	//create user table
@@ -39,9 +34,9 @@ func InitDB() {
 		email TEXT UNIQUE,
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 	);`
-	_, err = DB.Exec(createUsersTableQuery)
+	_, err = db.Exec(createUsersTableQuery)
 	if err != nil {
-		log.Fatalf("Failed to create users table: %v", err)
+		return nil, err
 	}
 
 	//create pref table
@@ -54,18 +49,19 @@ func InitDB() {
 		custom_icons TEXT,
 		FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 	);`
-	_, err = DB.Exec(createPreferencesTableQuery)
+	_, err = db.Exec(createPreferencesTableQuery)
 	if err != nil {
-		log.Fatalf("Failed to create preferences table: %v", err)
+		return nil, err
 	}
 
-	log.Println("Connected to SQLite database and ensured tables exist")
+	log.Println("Connected to SQLite database")
+	return db, nil
 }
 
 //close connection
-func CloseDB() {
-	if DB != nil {
-		DB.Close()
+func CloseDB(db *sql.DB) {
+	if db != nil {
+		db.Close()
 		log.Println("Database connection closed")
 	}
 }

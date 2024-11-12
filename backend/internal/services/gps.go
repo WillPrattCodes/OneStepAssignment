@@ -1,6 +1,7 @@
 package services
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -12,10 +13,10 @@ import (
 
 //load env
 func init() {
-	if err := godotenv.Load(); err != nil {
-		fmt.Println("Warning: No .env file found")
-	}
+	godotenv.Load()
 }
+
+//was considering moving these structs to a separate file but it's only used here so I left it here
 
 //lastest device point struct
 type DevicePoint struct {
@@ -37,7 +38,7 @@ type GPSResponse struct {
 }
 
 //service func to fetch data from gps api
-func FetchGPSData() ([]Device, error) {
+func FetchGPSData(db *sql.DB) ([]Device, error) {
 	gpsKey := os.Getenv("GPS_KEY")
 
 	//request url
@@ -66,6 +67,7 @@ func FetchGPSData() ([]Device, error) {
 	if err := json.Unmarshal(body, &gpsResponse); err != nil {
 		return nil, fmt.Errorf("failed to decode JSON response: %w", err)
 	}
+
 	//resturn parsed device list
 	return gpsResponse.ResultList, nil
 }

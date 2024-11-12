@@ -14,8 +14,11 @@ import (
 
 func main() {
 	//initialize db
-	database.InitDB()
-	defer database.CloseDB()
+	db, err := database.InitDB()
+	if err != nil {
+		log.Fatalf("Failed to initialize database: %v", err)
+	}
+	defer database.CloseDB(db)
 
 	//create server
 	server := &http.Server{
@@ -24,11 +27,11 @@ func main() {
 	}
 
 	//define api
-	http.HandleFunc("/api/register", handlers.RegisterUserHandler)
-	http.HandleFunc("/api/login", handlers.LoginUserHandler)
+	http.HandleFunc("/api/register", handlers.RegisterUserHandler(db))
+	http.HandleFunc("/api/login", handlers.LoginUserHandler(db))
 
 	//protected routes
-	http.Handle("/api/gps", middleware.AuthMiddleware(http.HandlerFunc(handlers.GetGPSDataHandler)))
+	http.Handle("/api/gps", middleware.AuthMiddleware(http.HandlerFunc(handlers.GetGPSDataHandler(db))))
 
 	//run server in goroutine
 	go func() {
