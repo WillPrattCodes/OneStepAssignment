@@ -24,6 +24,7 @@ func main() {
 
 	//define api
 	http.HandleFunc("/api/register", handlers.RegisterUserHandler)
+	http.HandleFunc("/api/login", handlers.LoginUserHandler)
 
 	//run server in goroutine
 	go func() {
