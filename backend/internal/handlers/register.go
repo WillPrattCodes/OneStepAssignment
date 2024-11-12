@@ -16,6 +16,7 @@ func RegisterUserHandler(w http.ResponseWriter, r *http.Request) {
 	//decode req body into user struct
 	var user models.User
 	err := json.NewDecoder(r.Body).Decode(&user)
+	fmt.Println(user);
 	if err != nil {
 		utils.SendErrorResponse(w, "Invalid input", http.StatusBadRequest)
 		return

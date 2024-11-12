@@ -8,21 +8,22 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// AuthenticateUser validates the user's credentials and returns an error if they are invalid
+//find if user exists and compare pass credentials
 func AuthenticateUser(email, password string) (models.User, error) {
-	// Retrieve the user from the database
+	//define user struct
 	var user models.User
 	query := `SELECT id, username, password, email FROM users WHERE email = ?`
+	//query db for user
 	err := database.DB.QueryRow(query, email).Scan(&user.ID, &user.Username, &user.Password, &user.Email)
 	if err != nil {
 		return user, fmt.Errorf("user not found")
 	}
 
-	// Compare the hashed password with the one provided by the user
+	//compare pass and hashed pass
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if err != nil {
 		return user, fmt.Errorf("invalid password")
 	}
-
+	//return user if no err
 	return user, nil
 }

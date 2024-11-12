@@ -3,11 +3,10 @@ package services
 import (
 	"backend/internal/database"
 	"backend/internal/models"
+	"backend/internal/utils"
 	"fmt"
 	"regexp"
 	"strings"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
 //custom err types
@@ -23,12 +22,6 @@ func isValidEmail(email string) bool {
 	return re.MatchString(email)
 }
 
-//helper func to hash password
-func HashPassword(password string) (string, error) {
-	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	return string(bytes), err
-};
-
 //register user in db
 func RegisterUser(user models.User) error {
 	fmt.Println("In RegisterUser")
@@ -39,7 +32,8 @@ func RegisterUser(user models.User) error {
 	};
 
 	//hash pass
-	hashedPassword, err := HashPassword(user.Password)
+	hashedPassword, err := utils.HashPassword(user.Password)
+	fmt.Println("hashedPassword: ", hashedPassword)
 	if err != nil {
 		return ErrHashingPassword
 	};

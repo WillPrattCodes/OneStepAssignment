@@ -3,6 +3,7 @@ package main
 import (
 	"backend/internal/database"
 	"backend/internal/handlers"
+	"backend/internal/middleware"
 	"context"
 	"log"
 	"net/http"
@@ -26,6 +27,9 @@ func main() {
 	http.HandleFunc("/api/register", handlers.RegisterUserHandler)
 	http.HandleFunc("/api/login", handlers.LoginUserHandler)
 
+	//protected routes
+	http.Handle("/api/gps", middleware.AuthMiddleware(http.HandlerFunc(handlers.GetGPSDataHandler)))
+
 	//run server in goroutine
 	go func() {
 		log.Println("Server running on port 8080")
@@ -37,7 +41,7 @@ func main() {
 	//shutdown on interrupt sig
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt)
-	<-sigChan // Wait for interrupt signal
+	<-sigChan //block until sig received
 
 	log.Println("Shutting down server")
 	//create context and cancel func with 5 sec timeout

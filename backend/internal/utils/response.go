@@ -6,12 +6,16 @@ import (
 )
 
 //success response function
-func SendJSONResponse(w http.ResponseWriter, message string) {
+func SendJSONResponse(w http.ResponseWriter, data interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]string{
-		"message": message,
-	})
+	//convert to json
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		http.Error(w, "Failed to encode JSON", http.StatusInternalServerError)
+		return
+	}
+	w.Write(jsonData)
 }
 
 //err response function
