@@ -10,6 +10,7 @@ import (
 //handler to request data from gps service
 func GetGPSDataHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		
 		//invoke fetch gps service function
 		data, err := services.FetchGPSData(db)
 		if err != nil {

@@ -32,6 +32,8 @@ func main() {
 
 	//protected routes
 	http.Handle("/api/gps", middleware.AuthMiddleware(http.HandlerFunc(handlers.GetGPSDataHandler(db))))
+	http.Handle("/api/getpreferences", middleware.AuthMiddleware(http.HandlerFunc(handlers.GetPreferencesHandler(db))))
+	http.Handle("/api/setpreferences", middleware.AuthMiddleware(http.HandlerFunc(handlers.SetPreferencesHandler(db))))
 
 	//run server in goroutine
 	go func() {

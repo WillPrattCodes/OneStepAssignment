@@ -43,7 +43,7 @@ func InitDB() (*sql.DB, error) {
 	createPreferencesTableQuery := `
 	CREATE TABLE IF NOT EXISTS preferences (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		user_id INTEGER,
+		user_id INTEGER UNIQUE NOT NULL,
 		sort_order TEXT,
 		hidden_devices TEXT,
 		custom_icons TEXT,

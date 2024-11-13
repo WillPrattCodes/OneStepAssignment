@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"backend/internal/utils"
+	"context"
 	"net/http"
 	"strings"
 )
@@ -21,12 +22,21 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
 
 		//validate token using utils
-		_, err := utils.ValidateJWT(tokenString)
+		claims, err := utils.ValidateJWT(tokenString)
 		if err != nil {
 			http.Error(w, "Invalid token", http.StatusUnauthorized)
 			return
 		}
+
+		//extract userID from claims
+		userID, ok := claims["userID"].(float64) // JWT stores numbers as float64
+		if !ok {
+			http.Error(w, "Invalid token claims", http.StatusUnauthorized)
+			return
+		}
+		//add userID to req context
+		ctx := context.WithValue(r.Context(), utils.UserIDKey, int(userID))
 		//call next handler
-		next.ServeHTTP(w, r)
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
