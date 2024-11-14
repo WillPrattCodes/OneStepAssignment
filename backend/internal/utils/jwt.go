@@ -15,7 +15,7 @@ func GenerateJWT(userID int) (string, error) {
 	//define claims
 	claims := &jwt.MapClaims{
 		"userID": userID,
-		"exp":    time.Now().Add(24 * time.Hour).Unix(), // Token expires in 24 hours
+		"exp":    time.Now().Add(24 * time.Hour).Unix(),//token expiration time
 	}
 	//define token claims and signature method
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -24,7 +24,6 @@ func GenerateJWT(userID int) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to generate token: %w", err)
 	}
-	fmt.Println("tokenString", tokenString)
 	return tokenString, nil
 }
 

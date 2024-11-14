@@ -3,13 +3,15 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "lint": "eslint . --fix",
-    "format": "prettier --write src/"
-  },
+"scripts": {
+  "dev": "concurrently \"vite\" \"cd ../backend && go run cmd/main.go\"",
+  "dev:client": "vite",
+  "dev:server": "cd ../backend && go run cmd/main.go",
+  "build": "vite build",
+  "preview": "vite preview",
+  "lint": "eslint . --fix",
+  "format": "prettier --write src/"
+},
   "dependencies": {
     "axios": "^1.7.7",
     "pinia": "^2.2.6",
@@ -21,6 +23,7 @@
     "@vitejs/plugin-vue": "^5.1.4",
     "@vue/eslint-config-prettier": "^10.1.0",
     "autoprefixer": "^10.4.20",
+    "concurrently": "^9.1.0",
     "eslint": "^9.14.0",
     "eslint-plugin-vue": "^9.30.0",
     "postcss": "^8.4.49",

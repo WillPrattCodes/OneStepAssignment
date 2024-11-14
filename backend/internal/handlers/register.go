@@ -6,42 +6,45 @@ import (
 	"backend/internal/utils"
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"net/http"
 )
 
 //handle user registration
 func RegisterUserHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("In RegisterUserHandler")
-
-		//decode req body into user struct
-		var user models.User
-		err := json.NewDecoder(r.Body).Decode(&user)
-		fmt.Println(user)
-		if err != nil {
-			utils.SendErrorResponse(w, "Invalid input", http.StatusBadRequest)
-			return
-		}
-
-		//call service to register user in db
-		err = services.RegisterUser(db, user)
-		if err != nil {
-			//error handling 
-			switch err {
-			case services.ErrInvalidEmail:
-				utils.SendErrorResponse(w, "Invalid email format", http.StatusBadRequest)
-			case services.ErrEmailAlreadyExists:
-				utils.SendErrorResponse(w, "Email already exists", http.StatusConflict)
-			case services.ErrHashingPassword:
-				utils.SendErrorResponse(w, "Failed to hash password", http.StatusInternalServerError)
-			default:
-				utils.SendErrorResponse(w, "User registration failed", http.StatusInternalServerError)
+			//declare user struct
+			var user models.User
+			//decode request body into user struct
+			err := json.NewDecoder(r.Body).Decode(&user)
+			if err != nil {
+					utils.SendErrorResponse(w, "Invalid input", http.StatusBadRequest)
+					return
 			}
-			return
-		}
 
-		//success message
-		utils.SendJSONResponse(w, "User registered successfully")
+			//call service to register the user
+			err = services.RegisterUser(db, user)
+			if err != nil {
+					switch err {
+					case services.ErrInvalidEmail:
+							utils.SendErrorResponse(w, "Invalid email format", http.StatusBadRequest)
+					case services.ErrEmailAlreadyExists:
+							utils.SendErrorResponse(w, "Email already exists", http.StatusConflict)
+					case services.ErrUsernameAlreadyExists:
+							utils.SendErrorResponse(w, "Username already exists", http.StatusConflict)
+					default:
+							utils.SendErrorResponse(w, "User registration failed", http.StatusInternalServerError)
+					}
+					return
+			}
+
+			//generate token for the registered user
+			token, err := utils.GenerateJWT(user.ID)
+			if err != nil {
+					utils.SendErrorResponse(w, "Failed to generate token", http.StatusInternalServerError)
+					return
+			}
+
+			//return token in the response
+			utils.SendJSONResponse(w, map[string]string{"token": token})
 	}
 }

@@ -6,14 +6,14 @@ import (
 	"database/sql"
 	"fmt"
 	"regexp"
-	"strings"
 )
 
 //custom err types
 var (
-	ErrInvalidEmail      = fmt.Errorf("invalid email format")
+	ErrInvalidEmail = fmt.Errorf("invalid email format")
 	ErrEmailAlreadyExists = fmt.Errorf("email already exists")
-	ErrHashingPassword   = fmt.Errorf("failed to hash password")
+	ErrUsernameAlreadyExists = fmt.Errorf("username already exists")
+	ErrHashingPassword = fmt.Errorf("failed to hash password")
 )
 
 //make sure email is in correct format
@@ -24,16 +24,32 @@ func isValidEmail(email string) bool {
 
 //register user in db
 func RegisterUser(db *sql.DB, user models.User) error {
-	fmt.Println("In RegisterUser")
 
 	//validate email value
 	if !isValidEmail(user.Email) {
 		return ErrInvalidEmail
 	}
 
+	//check if email already exists
+	var existingEmail string
+	err := db.QueryRow("SELECT email FROM users WHERE email = ?", user.Email).Scan(&existingEmail)
+	if err == nil {
+		return ErrEmailAlreadyExists
+	} else if err != sql.ErrNoRows {
+		return fmt.Errorf("database error while checking email: %v", err)
+	}
+
+	//check if username already exists
+	var existingUsername string
+	err = db.QueryRow("SELECT username FROM users WHERE username = ?", user.Username).Scan(&existingUsername)
+	if err == nil {
+		return ErrUsernameAlreadyExists
+	} else if err != sql.ErrNoRows {
+		return fmt.Errorf("database error while checking username: %v", err)
+	}
+
 	//hash pass
 	hashedPassword, err := utils.HashPassword(user.Password)
-	fmt.Println("hashedPassword: ", hashedPassword)
 	if err != nil {
 		return ErrHashingPassword
 	}
@@ -42,10 +58,6 @@ func RegisterUser(db *sql.DB, user models.User) error {
 	insertQuery := `INSERT INTO users (username, password, email) VALUES (?, ?, ?)`
 	_, err = db.Exec(insertQuery, user.Username, hashedPassword, user.Email)
 	if err != nil {
-		//handle email existing error
-		if strings.Contains(err.Error(), "UNIQUE constraint failed") {
-			return ErrEmailAlreadyExists
-		}
 		return fmt.Errorf("failed to register user: %v", err)
 	}
 

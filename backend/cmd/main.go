@@ -20,20 +20,22 @@ func main() {
 	}
 	defer database.CloseDB(db)
 
+	// Create a new ServeMux
+	mux := http.NewServeMux()
+
+	
+	//define routes
+	mux.HandleFunc("/api/register", handlers.RegisterUserHandler(db))
+	mux.HandleFunc("/api/login", handlers.LoginUserHandler(db))
+	mux.Handle("/api/gps", middleware.AuthMiddleware(http.HandlerFunc(handlers.GetGPSDataHandler(db))))
+	mux.Handle("/api/getpreferences", middleware.AuthMiddleware(http.HandlerFunc(handlers.GetPreferencesHandler(db))))
+	mux.Handle("/api/setpreferences", middleware.AuthMiddleware(http.HandlerFunc(handlers.SetPreferencesHandler(db))))
+	
 	//create server
 	server := &http.Server{
 		Addr:    ":8080",
-		Handler: nil,
+		Handler: middleware.EnableCORS(mux),
 	}
-
-	//define api
-	http.HandleFunc("/api/register", handlers.RegisterUserHandler(db))
-	http.HandleFunc("/api/login", handlers.LoginUserHandler(db))
-
-	//protected routes
-	http.Handle("/api/gps", middleware.AuthMiddleware(http.HandlerFunc(handlers.GetGPSDataHandler(db))))
-	http.Handle("/api/getpreferences", middleware.AuthMiddleware(http.HandlerFunc(handlers.GetPreferencesHandler(db))))
-	http.Handle("/api/setpreferences", middleware.AuthMiddleware(http.HandlerFunc(handlers.SetPreferencesHandler(db))))
 
 	//run server in goroutine
 	go func() {

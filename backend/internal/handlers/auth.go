@@ -27,7 +27,7 @@ func LoginUserHandler(db *sql.DB) http.HandlerFunc {
 		//authenticate user usering auth service
 		user, err := services.AuthenticateUser(db, credentials.Email, credentials.Password)
 		if err != nil {
-			utils.SendErrorResponse(w, "invalid credentials", http.StatusUnauthorized)
+			utils.SendErrorResponse(w, "Invalid email or password", http.StatusUnauthorized)
 			return
 		}
 
