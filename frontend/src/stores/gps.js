@@ -16,14 +16,13 @@ export const useGPSStore = defineStore('gps', {
       const authStore = useAuthStore();
 
       try {
-        // Fetch GPS data from the server using the token
+        //fetch gps data
         const response = await api.get('/api/gps', {
           headers: {
             Authorization: `Bearer ${authStore.token}`,
           },
         });
         this.gpsData = response.data;
-        console.log('Fetched GPS Data:', response.data);
       } catch (error) {
         console.error('Failed to fetch GPS data:', error);
         this.error = 'Failed to fetch GPS data';

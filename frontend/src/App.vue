@@ -1,7 +1,7 @@
 <template>
-  <div class="flex flex-col min-h-screen bg-gray-50">
-    <Navbar />
-    <router-view class="flex-1 p-8" />
+  <div class="flex-col h-screen bg-gray-50">
+    <Navbar class="h-[7vh]" />
+    <router-view class="flex-1 h-[93vh] overflow-hidden" />
   </div>
 </template>
 

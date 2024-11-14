@@ -1,41 +1,59 @@
 <template>
-  <div class="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-    <div class="w-full max-w-3xl p-8 bg-white rounded-lg shadow-lg">
-      <h2 class="mb-6 text-3xl font-bold text-center text-gray-800">Welcome, {{ user?.username }}!</h2>
-      <p class="mb-8 text-center text-gray-600">Here is your dashboard:</p>
+  <div class="flex bg-gray-100">
+    <!--sidebar containing devices-->
+    <div class="w-1/3 h-screen p-4 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
+      <h2 class="mb-6 text-2xl font-bold text-gray-800">Devices</h2>
+      <ul class="space-y-4">
+        <!--render list using loop containing all device info-->
+        <li 
+          v-for="(device, index) in gpsStore.gpsData" 
+          :key="index" 
+          class="p-4 transition rounded-lg shadow-sm bg-gray-50 hover:bg-gray-100"
+        >
+          <h3 class="font-semibold text-gray-700">{{ device.display_name }}</h3>
+          <p class="text-sm text-gray-600">
+            <strong>Location:</strong> Lat: {{ device.latest_device_point?.lat }}, Lng: {{ device.latest_device_point?.lng }}
+          </p>
+          <p class="text-sm text-gray-600">
+            <strong>Status:</strong> {{ device.online ? 'Online' : 'Offline' }}
+          </p>
+        </li>
+      </ul>
+    </div>
 
-      <!--conditional gps data-->
-      <div v-if="gpsStore.gpsData.length > 0" class="mb-6">
-        <h3 class="mb-4 text-xl font-semibold text-gray-700">Your GPS Data:</h3>
-        <ul>
-          <li v-for="(data, index) in gpsStore.gpsData" :key="index" class="py-2 border-b border-gray-300">
-            <p><strong>Device:</strong> {{ data.display_name }}</p>
-            <p><strong>Location:</strong> Lat: {{ data.latest_device_point.lat }}, Lng: {{ data.latest_device_point.lng }}</p>
-            <p><strong>Status:</strong> {{ data.online ? 'Online' : 'Offline' }}</p>
-          </li>
-        </ul>
-      </div>
-      <div v-else class="text-gray-500">No GPS data available.</div>
-
-      <!--conditional err message-->
-      <p v-if="gpsStore.error" class="text-red-500">{{ gpsStore.error }}</p>
+    <!--google maps-->
+    <div class="flex-1 h-screen">
+      <GoogleMap />
     </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
-import { useAuthStore } from '@/stores/auth';
+import { onMounted, onBeforeUnmount } from 'vue';
 import { useGPSStore } from '@/stores/gps';
+import GoogleMap from '@/components/GoogleMap.vue';
 
-//get auth and gps store
-const authStore = useAuthStore();
 const gpsStore = useGPSStore();
-const user = authStore.user;
+let fetchInterval;
 
-//fetch gps data on mounted
-onMounted(() => {
-  gpsStore.fetchGPSData();
-});
+//start polling to fetch gps data
+const startPolling = () => {
+  gpsStore.fetchGPSData(); //fetch initial gps data
 
+  //fetch new data every 10 seconds
+  fetchInterval = setInterval(() => {
+    console.log('Fetching updated GPS data...');
+    gpsStore.fetchGPSData();
+  }, 10000);
+};
+
+//stop olling to clean up gps data
+const stopPolling = () => {
+  if (fetchInterval) {
+    clearInterval(fetchInterval);
+  }
+};
+
+onMounted(startPolling); //start polling when component is mounted
+onBeforeUnmount(stopPolling); //stop polling when component is unmounted
 </script>
