@@ -71,8 +71,8 @@ const handleLogin = async () => {
 
     //redirect to dash after 1 second delay to display success message
     setTimeout(() => {
-      window.location.href = '/dashboard';
-    }, 1000);
+      window.location.href = '/';
+    }, 500);
   } else {
     //display error message
     message.value = result.message;

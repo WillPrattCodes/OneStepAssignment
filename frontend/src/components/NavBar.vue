@@ -1,12 +1,10 @@
 <template>
   <nav class="flex items-center justify-between p-4 text-white bg-blue-600">
     <div>
-      <router-link to="/" class="mr-4 hover:underline">Home</router-link>
-      <router-link to="/register" class="mr-4 hover:underline">Register</router-link>
-      <router-link to="/login" class="mr-4 hover:underline">Login</router-link>
-      <router-link v-if="isAuthenticated" to="/dashboard" class="mr-4 hover:underline">Dashboard</router-link>
+      <router-link v-if="isAuthenticated" to="/" class="mr-4 hover:underline">Home</router-link>
+      <router-link v-if="!isAuthenticated" to="/register" class="mr-4 hover:underline">Register</router-link>
+      <router-link v-if="!isAuthenticated" to="/login" class="mr-4 hover:underline">Login</router-link>
     </div>
-    <!-- Logout Button -->
     <button 
       v-if="isAuthenticated" 
       @click="handleLogout" 
@@ -20,17 +18,17 @@
 <script setup>
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { useAuthStore } from '@/stores/auth'; // Import the Pinia store
+import { useAuthStore } from '@/stores/auth'; 
 
 const authStore = useAuthStore();
 const router = useRouter();
 
-// Computed property to check if user is authenticated
+//computed property to check if user is authenticated
 const isAuthenticated = computed(() => authStore.isAuthenticated);
 
-// Function to handle logout
+//func to handle logout
 const handleLogout = () => {
   authStore.logout();
-  router.push('/login'); // Redirect to login page after logout
+  router.push('/login');
 };
 </script>

@@ -44,7 +44,17 @@ func RegisterUserHandler(db *sql.DB) http.HandlerFunc {
 					return
 			}
 
+			//define response
+			response := map[string]interface{}{
+				"token": token,
+				"user": map[string]interface{}{
+						"id":       user.ID,
+						"username": user.Username,
+						"email":    user.Email,
+				},
+		}
+
 			//return token in the response
-			utils.SendJSONResponse(w, map[string]string{"token": token})
+			utils.SendJSONResponse(w, response)
 	}
 }

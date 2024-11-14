@@ -81,8 +81,8 @@ const registerUser = async () => {
 
     //redirect to dashboard page after successful registration
     setTimeout(() => {
-      window.location.href = '/dashboard';
-    }, 1000);
+      window.location.href = '/';
+    }, 500);
   } else {
     // handle errors and display message
     message.value = result.message;

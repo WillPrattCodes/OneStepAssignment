@@ -4,7 +4,7 @@ import api from '@/utils/axios';
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     token: localStorage.getItem('token') || '',
-    user: null,
+    user: JSON.parse(localStorage.getItem('user')) || null,
   }),
   actions: {
     //login function
@@ -12,7 +12,9 @@ export const useAuthStore = defineStore('auth', {
       try {
         const response = await api.post('/api/login', { email, password });
         this.token = response.data.token;
+        this.user = response.data.user;
         localStorage.setItem('token', this.token);
+        localStorage.setItem('user', JSON.stringify(this.user));
         return { success: true, message: "Login successful!" };
       } catch (error) {
         if (error.response && error.response.status === 401) {
@@ -26,10 +28,11 @@ export const useAuthStore = defineStore('auth', {
       try {
         const response = await api.post('/api/register', { username, email, password });
         
-        //save token to localStorage and state
-        const token = response.data.token;
-        this.token = token;
-        localStorage.setItem('token', token);
+        //save token and user to localStorage and state
+        this.token = response.data.token;
+        this.user = response.data.user;
+        localStorage.setItem('token', this.token);
+        localStorage.setItem('user', JSON.stringify(this.user));
     
         return { success: true, message: "Registration successful!" };
       } catch (error) {
@@ -38,7 +41,7 @@ export const useAuthStore = defineStore('auth', {
         }
         return { success: false, message: error.response?.data || 'Registration failed. Please try again later.' };
       }
-    },    
+    },   
     //logout function
     logout() {
       this.token = '';

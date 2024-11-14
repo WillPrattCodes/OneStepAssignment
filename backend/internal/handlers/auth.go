@@ -39,9 +39,14 @@ func LoginUserHandler(db *sql.DB) http.HandlerFunc {
 		}
 
 		//define response
-		response := map[string]string{
+		response := map[string]interface{}{
 			"token": token,
-		}
+			"user": map[string]interface{}{
+					"id":       user.ID,
+					"username": user.Username,
+					"email":    user.Email,
+			},
+	}
 		//send response
 		utils.SendJSONResponse(w, response)
 	}

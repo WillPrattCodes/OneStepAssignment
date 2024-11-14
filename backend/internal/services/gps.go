@@ -67,7 +67,6 @@ func FetchGPSData(db *sql.DB) ([]Device, error) {
 	if err := json.Unmarshal(body, &gpsResponse); err != nil {
 		return nil, fmt.Errorf("failed to decode JSON response: %w", err)
 	}
-
 	//resturn parsed device list
 	return gpsResponse.ResultList, nil
 }

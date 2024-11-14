@@ -4,6 +4,7 @@ import (
 	"backend/internal/services"
 	"backend/internal/utils"
 	"database/sql"
+	"fmt"
 	"net/http"
 )
 
@@ -17,7 +18,7 @@ func GetGPSDataHandler(db *sql.DB) http.HandlerFunc {
 			utils.SendErrorResponse(w, "Failed to get GPS data", http.StatusInternalServerError)
 			return
 		}
-
+		fmt.Printf("data: %v\n", data)
 		//send back response
 		utils.SendJSONResponse(w, data)
 	}

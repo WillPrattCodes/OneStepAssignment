@@ -7,10 +7,9 @@ import DashBoard from '@/views/DashBoard.vue';
 
 //declare routes
 const routes = [
-  { path: '/', redirect: '/login' },
+  { path: '/', component: DashBoard, meta: { requiresAuth: true }},
   { path: '/register', name: 'Register', component: RegisterUser },
   { path: '/login', name: 'Login', component: LoginUser },
-  { path: '/dashboard', name: 'Dashboard', component: DashBoard, meta: { requiresAuth: true } },
 ];
 
 //create router
@@ -24,7 +23,9 @@ router.beforeEach((to, from, next) => {
   //check for auth token from local storage
   const isAuthenticated = localStorage.getItem('token');
   //if route requires auth and user is not authenticated redirect to login
-  if (to.meta.requiresAuth && !isAuthenticated) {
+  if ((to.path === '/login' || to.path === '/register') && isAuthenticated) {
+    next('/');
+  } else if (to.meta.requiresAuth && !isAuthenticated) {
     next('/login');
   } else {
     next();
