@@ -11,6 +11,7 @@
 
 <script setup>
 const props = defineProps(['onClick']);
+//func to handle click event
 const handleClick = () => {
   if (props.onClick) props.onClick();
 };

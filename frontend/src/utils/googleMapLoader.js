@@ -13,7 +13,7 @@ export function loadGoogleMaps(apiKey) {
     script.async = true; //set the script to async
     script.defer = true; //set the script to defer
 
-    //when the script is loaded, resolve the promise
+    //when the script is loaded, resolve the promise 
     script.onload = () => {
       isLoaded = true;
       resolve(window.google);

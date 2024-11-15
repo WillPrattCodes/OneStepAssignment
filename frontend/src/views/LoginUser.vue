@@ -41,7 +41,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useAuthStore } from '@/stores/auth'; // Import the Pinia store
+import { useAuthStore } from '@/stores/auth';
 
 //refs for email and pass inputs
 const email = ref('');

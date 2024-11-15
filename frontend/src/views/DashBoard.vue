@@ -7,41 +7,43 @@
         <!--filter button component-->
         <FilterButton @click="openPreferences" />
       </div>
-
+      
       <!--preferences menu-->
       <div v-if="showPreferences" class="p-4 mb-6 bg-white border rounded shadow-lg">
         <h3 class="mb-4 text-lg font-semibold text-gray-800">Sort Devices</h3>
         <button
-          @click="setSortOrder('asc')"
-          :class="['w-full p-2 mt-2 rounded', preferences.sortOrder === 'asc' ? 'bg-blue-600 text-white' : 'bg-gray-200']"
+        @click="setSortOrder('asc')"
+        :class="['w-full p-2 mt-2 rounded', preferences.sortOrder === 'asc' ? 'bg-blue-600 text-white' : 'bg-gray-200']"
         >
-          Ascending
-        </button>
-        <button
-          @click="setSortOrder('desc')"
-          :class="['w-full p-2 mt-2 rounded', preferences.sortOrder === 'desc' ? 'bg-blue-600 text-white' : 'bg-gray-200']"
-        >
-          Descending
-        </button>
-      </div>
-
-      <!--render dvice list using loop through device data-->
-      <ul class="space-y-4">
-        <li 
-          v-for="(device, index) in sortedDevices" 
-          :key="index" 
-          class="p-4 transition rounded-lg shadow-sm bg-gray-50 hover:bg-gray-100"
-        >
-          <h3 class="font-semibold text-gray-700">{{ device.display_name }}</h3>
-          <p class="text-sm text-gray-600">
-            <strong>Location:</strong> Lat: {{ device.latest_device_point?.lat }}, Lng: {{ device.latest_device_point?.lng }}
-          </p>
-          <p class="text-sm text-gray-600">
-            <strong>Speed:</strong> {{ Math.round(device.latest_device_point.speed) }}
-          </p>
-          <p class="text-sm text-gray-600">
-            <strong>Status:</strong> {{ device.online ? 'Online' : 'Offline' }}
-          </p>
+        Ascending
+      </button>
+      <button
+      @click="setSortOrder('desc')"
+      :class="['w-full p-2 mt-2 rounded', preferences.sortOrder === 'desc' ? 'bg-blue-600 text-white' : 'bg-gray-200']"
+      >
+      Descending
+    </button>
+  </div>
+  
+  <!--render dvice list using loop through device data-->
+  <ul class="space-y-4">
+    <li v-for="(device, index) in sortedDevices" :key="index" class="p-4 transition rounded-lg shadow-sm bg-gray-50 hover:bg-gray-100">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="font-semibold text-gray-700">{{ device.display_name }}</h3>
+              <p class="text-sm text-gray-600">
+                <strong>Location:</strong> Lat: {{ device.latest_device_point?.lat.toFixed(3) }}, Lng: {{ device.latest_device_point?.lng.toFixed(3) }}
+              </p>
+              <p class="text-sm text-gray-600">
+                <strong>Speed:</strong> {{ Math.round(device.latest_device_point.speed) }}
+              </p>
+              <p class="text-sm text-gray-600">
+                <strong>Status:</strong> {{ device.online ? 'Online' : 'Offline' }}
+              </p>
+            </div>
+            <!-- Visibility Toggle Button Component -->
+            <VisibilityButton :deviceId="device.device_id" />
+          </div>
         </li>
       </ul>
     </div>
@@ -60,6 +62,8 @@ import { useGPSStore } from '@/stores/gps';
 import { usePrefStore } from '@/stores/pref';
 import GoogleMap from '@/components/GoogleMap.vue';
 import FilterButton from '@/components/FilterButton.vue';
+import VisibilityButton from '@/components/VisibilityButton.vue';
+
 
 const gpsStore = useGPSStore();
 const prefStore = usePrefStore();
@@ -84,12 +88,15 @@ const setSortOrder = (order) => {
   prefStore.setPreferences(preferences.value);
 };
 
+
 //create sorted devices list based on user preference
 const sortedDevices = computed(() => {
   const devices = [...gpsStore.gpsData];
   if (preferences.value.sortOrder === 'asc') {
+    //sort devices by asc
     return devices.sort((a, b) => a.display_name.localeCompare(b.display_name));
   } else if (preferences.value.sortOrder === 'desc') {
+    //sort devices by desc
     return devices.sort((a, b) => b.display_name.localeCompare(a.display_name));
   }
   return devices;

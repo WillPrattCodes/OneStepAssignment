@@ -15,7 +15,7 @@ export const useAuthStore = defineStore('auth', {
         this.user = response.data.user;
         localStorage.setItem('token', this.token);
         localStorage.setItem('user', JSON.stringify(this.user));
-        return { success: true, message: "Login successful!" };
+        return { success: true, message: "Login successful" };
       } catch (error) {
         if (error.response && error.response.status === 401) {
           return { success: false, message: 'Invalid email or password. Try again.' };
@@ -34,7 +34,7 @@ export const useAuthStore = defineStore('auth', {
         localStorage.setItem('token', this.token);
         localStorage.setItem('user', JSON.stringify(this.user));
     
-        return { success: true, message: "Registration successful!" };
+        return { success: true, message: "Registration successful" };
       } catch (error) {
         if (error.response && error.response.status === 409) {
           return { success: false, message: 'Email or username already exists.' };

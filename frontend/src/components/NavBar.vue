@@ -5,6 +5,9 @@
       <router-link v-if="!isAuthenticated" to="/register" class="mr-4 hover:underline">Register</router-link>
       <router-link v-if="!isAuthenticated" to="/login" class="mr-4 hover:underline">Login</router-link>
     </div>
+    <div>
+      <h1 class="text-xl" >GPS App</h1>
+    </div>
     <button 
       v-if="isAuthenticated" 
       @click="handleLogout" 
@@ -17,11 +20,9 @@
 
 <script setup>
 import { computed } from 'vue';
-import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth'; 
 
 const authStore = useAuthStore();
-const router = useRouter();
 
 //computed property to check if user is authenticated
 const isAuthenticated = computed(() => authStore.isAuthenticated);
@@ -29,6 +30,5 @@ const isAuthenticated = computed(() => authStore.isAuthenticated);
 //func to handle logout
 const handleLogout = () => {
   authStore.logout();
-  router.push('/login');
 };
 </script>

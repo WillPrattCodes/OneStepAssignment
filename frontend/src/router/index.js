@@ -4,14 +4,12 @@ import { createRouter, createWebHistory } from 'vue-router';
 import RegisterUser from '@/views/RegisterUser.vue';
 import LoginUser from '@/views/LoginUser.vue';
 import DashBoard from '@/views/DashBoard.vue';
-import GoogleMap from '@/components/GoogleMap.vue';
 
 //declare routes
 const routes = [
   { path: '/', component: DashBoard, meta: { requiresAuth: true }},
   { path: '/register', name: 'Register', component: RegisterUser },
   { path: '/login', name: 'Login', component: LoginUser },
-  { path: '/map', name: 'Map', component: GoogleMap, meta: { requiresAuth: true }},
 ];
 
 //create router

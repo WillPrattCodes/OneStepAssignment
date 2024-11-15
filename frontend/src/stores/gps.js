@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia';
 import api from '@/utils/axios';
-import { useAuthStore } from './auth';
 
 export const useGPSStore = defineStore('gps', {
   state: () => ({
@@ -13,14 +12,10 @@ export const useGPSStore = defineStore('gps', {
     async fetchGPSData() {
       this.loading = true;
       this.error = null;
-      const authStore = useAuthStore();
 
       try {
         //fetch gps data
         const response = await api.get('/api/gps', {
-          headers: {
-            Authorization: `Bearer ${authStore.token}`,
-          },
         });
         this.gpsData = response.data;
       } catch (error) {
@@ -30,10 +25,5 @@ export const useGPSStore = defineStore('gps', {
         this.loading = false;
       }
     },
-  },
-
-  getters: {
-    getGPSData: (state) => state.gpsData,
-    
   },
 });
