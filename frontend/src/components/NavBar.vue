@@ -9,7 +9,7 @@
         >Login</router-link
       >
     </div>
-    <div>
+    <div class="absolute transform -translate-x-1/2 left-1/2">
       <h1 class="text-xl">GPS App</h1>
     </div>
     <button
