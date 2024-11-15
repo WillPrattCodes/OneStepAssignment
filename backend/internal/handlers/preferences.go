@@ -6,6 +6,7 @@ import (
 	"backend/internal/utils"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -32,8 +33,24 @@ func GetPreferencesHandler(db *sql.DB) http.HandlerFunc {
 //save or update user preferences handler
 func SetPreferencesHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+
 		//extract userID from context
-		userID := r.Context().Value("userID").(int)
+		userIDValue := r.Context().Value(utils.UserIDKey)
+
+		//check if the value is nil
+		if userIDValue == nil {
+			http.Error(w, "unauthorized: user ID not found in context", http.StatusUnauthorized)
+			return
+		}
+
+		//typer assert userID to int
+		userID, ok := userIDValue.(int)
+		if !ok {
+			fmt.Println("type assertion failed for userID")
+			http.Error(w, "invalid user ID in context", http.StatusUnauthorized)
+			return
+		}
+
 		//create preferences object
 		var prefs models.Preferences
 		//parse request body
@@ -42,6 +59,7 @@ func SetPreferencesHandler(db *sql.DB) http.HandlerFunc {
 			utils.SendErrorResponse(w, "Invalid input", http.StatusBadRequest)
 			return
 		}
+
 		//use service to save or update preferences
 		err = services.SaveOrUpdatePreferences(db, userID, prefs)
 		if err != nil {

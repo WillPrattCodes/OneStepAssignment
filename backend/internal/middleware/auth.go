@@ -24,18 +24,19 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		//validate token using utils
 		claims, err := utils.ValidateJWT(tokenString)
 		if err != nil {
-			http.Error(w, "Invalid token", http.StatusUnauthorized)
+			http.Error(w, "invalid token", http.StatusUnauthorized)
 			return
 		}
 
 		//extract userID from claims
-		userID, ok := claims["userID"].(float64) // JWT stores numbers as float64
+		userID, ok := claims["userID"].(float64)
 		if !ok {
 			http.Error(w, "Invalid token claims", http.StatusUnauthorized)
 			return
 		}
 		//add userID to req context
 		ctx := context.WithValue(r.Context(), utils.UserIDKey, int(userID))
+
 		//call next handler
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})

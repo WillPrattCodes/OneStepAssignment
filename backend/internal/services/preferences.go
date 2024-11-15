@@ -36,6 +36,7 @@ func FetchPreferences(db *sql.DB, userID int) (models.Preferences, error) {
 //service to save or update user preferences
 func SaveOrUpdatePreferences(db *sql.DB, userID int, prefs models.Preferences) error {
 	//define query
+	fmt.Println("preferences", prefs)
 	query := `INSERT INTO preferences (user_id, sort_order, hidden_devices, custom_icons)
 			  VALUES (?, ?, ?, ?)
 			  ON CONFLICT(user_id) DO UPDATE SET 

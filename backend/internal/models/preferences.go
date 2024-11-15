@@ -4,7 +4,7 @@ package models
 type Preferences struct {
 	ID            int    `json:"id,omitempty"`
 	UserID        int    `json:"user_id,omitempty"`
-	SortOrder     string `json:"sort_order"`
-	HiddenDevices string `json:"hidden_devices"`
-	CustomIcons   string `json:"custom_icons"`
+	SortOrder     string `json:"sortOrder"`
+	HiddenDevices string `json:"hiddenDevices"`
+	CustomIcons   string `json:"customIcons"`
 }

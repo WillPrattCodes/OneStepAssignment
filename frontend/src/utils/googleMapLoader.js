@@ -11,6 +11,8 @@ export function loadGoogleMaps(apiKey) {
     const script = document.createElement('script'); //create a script element
     script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}`; //set the script source to google maps api
     script.async = true; //set the script to async
+    script.defer = true; //set the script to defer
+
     //when the script is loaded, resolve the promise
     script.onload = () => {
       isLoaded = true;
