@@ -1,5 +1,5 @@
-import { defineStore } from 'pinia';
-import api from '@/utils/axios';
+import { defineStore } from 'pinia'
+import api from '@/utils/axios'
 
 export const useGPSStore = defineStore('gps', {
   state: () => ({
@@ -10,20 +10,19 @@ export const useGPSStore = defineStore('gps', {
 
   actions: {
     async fetchGPSData() {
-      this.loading = true;
-      this.error = null;
+      this.loading = true
+      this.error = null
 
       try {
         //fetch gps data
-        const response = await api.get('/api/gps', {
-        });
-        this.gpsData = response.data;
+        const response = await api.get('/api/gps', {})
+        this.gpsData = response.data
       } catch (error) {
-        console.error('Failed to fetch GPS data:', error);
-        this.error = 'Failed to fetch GPS data';
+        console.error('Failed to fetch GPS data:', error)
+        this.error = 'Failed to fetch GPS data'
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     },
   },
-});
+})

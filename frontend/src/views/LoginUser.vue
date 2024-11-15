@@ -32,7 +32,11 @@
       </form>
 
       <!--err/success message-->
-      <p v-if="message" :class="messageType === 'error' ? 'text-red-500' : 'text-green-500'" class="mt-4 text-center">
+      <p
+        v-if="message"
+        :class="messageType === 'error' ? 'text-red-500' : 'text-green-500'"
+        class="mt-4 text-center"
+      >
         {{ message }}
       </p>
     </div>
@@ -40,46 +44,46 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useAuthStore } from '@/stores/auth';
+import { ref } from 'vue'
+import { useAuthStore } from '@/stores/auth'
 
 //refs for email and pass inputs
-const email = ref('');
-const password = ref('');
+const email = ref('')
+const password = ref('')
 
 //refs for messages
-const message = ref('');
-const messageType = ref(''); //to display success or error message
-const loading = ref(false); //handle button state to prevent multiple clicks
+const message = ref('')
+const messageType = ref('') //to display success or error message
+const loading = ref(false) //handle button state to prevent multiple clicks
 
 //initialize auth store
-const authStore = useAuthStore();
+const authStore = useAuthStore()
 
 //function to handle login
 const handleLogin = async () => {
-  message.value = '';
-  messageType.value = '';
-  loading.value = true; //set loading to true to disable button
+  message.value = ''
+  messageType.value = ''
+  loading.value = true //set loading to true to disable button
 
   //use auth store login action
-  const result = await authStore.login(email.value, password.value);
+  const result = await authStore.login(email.value, password.value)
 
   //handle response from auth store action
   if (result.success) {
-    message.value = result.message;
-    messageType.value = 'success';
+    message.value = result.message
+    messageType.value = 'success'
 
     //redirect to dash after 1 second delay to display success message
     setTimeout(() => {
-      window.location.href = '/';
-    }, 500);
+      window.location.href = '/'
+    }, 500)
   } else {
     //display error message
-    message.value = result.message;
-    messageType.value = 'error';
-    password.value = ''; //clear pass field after failed login
+    message.value = result.message
+    messageType.value = 'error'
+    password.value = '' //clear pass field after failed login
   }
 
-  loading.value = false; //set loading to false to enable button
-};
+  loading.value = false //set loading to false to enable button
+}
 </script>

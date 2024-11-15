@@ -41,7 +41,11 @@
       </form>
 
       <!--err or success message-->
-      <p v-if="message" :class="messageType === 'error' ? 'text-red-500' : 'text-green-500'" class="mt-4 text-center">
+      <p
+        v-if="message"
+        :class="messageType === 'error' ? 'text-red-500' : 'text-green-500'"
+        class="mt-4 text-center"
+      >
         {{ message }}
       </p>
     </div>
@@ -49,48 +53,48 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useAuthStore } from '@/stores/auth'; 
+import { ref } from 'vue'
+import { useAuthStore } from '@/stores/auth'
 
 //refs for inputs
-const username = ref('');
-const email = ref('');
-const password = ref('');
+const username = ref('')
+const email = ref('')
+const password = ref('')
 
 //refs for messages and button state
-const message = ref('');
-const messageType = ref('');
-const loading = ref(false);
+const message = ref('')
+const messageType = ref('')
+const loading = ref(false)
 
 //initialize auth store
-const authStore = useAuthStore();
+const authStore = useAuthStore()
 
 //function to handle registration
 const registerUser = async () => {
-  message.value = '';
-  messageType.value = '';
-  loading.value = true;
+  message.value = ''
+  messageType.value = ''
+  loading.value = true
 
   //use the auth store's register action
-  const result = await authStore.register(username.value, email.value, password.value);
+  const result = await authStore.register(username.value, email.value, password.value)
 
   //handle response from store action
   if (result.success) {
-    message.value = result.message;
-    messageType.value = 'success';
+    message.value = result.message
+    messageType.value = 'success'
 
     //redirect to dashboard page after successful registration
     setTimeout(() => {
-      window.location.href = '/';
-    }, 500);
+      window.location.href = '/'
+    }, 500)
   } else {
     // handle errors and display message
-    message.value = result.message;
-    messageType.value = 'error';
-    password.value = ''; //clear password field
+    message.value = result.message
+    messageType.value = 'error'
+    password.value = '' //clear password field
   }
 
   //set loading to false to enable button
-  loading.value = false;
-};
+  loading.value = false
+}
 </script>
